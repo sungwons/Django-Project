@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% block header %}
+<script>
+function product_detail(id){
+    $.ajax({
+          url: "/api/product/" + id,
+          success: function( result ) {
+            $("#product-" + id).popover({
+                html: true,
+                content: "Price: " + result.price + "</br>" + "Stock: " + result.stock
+              }).popover('show');
+            }
+          });
+}
+
+function product_leave(id){
+    $("#product-" + id).popover('hide');
+
+}
+$(document).ready(function(){});
+</script>
+{% endblock %}
+{% block contents %}
+<div class="row mt-5">
+    <div class="col mt-12">
+        <table class="table table-light">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Product Name</th>
+                    <th scope="col">Product Price</th>
+                    <th scope="col">Registered Date</th>
+                </tr>
+            </thead>
+            <tbody class="text-dark">
+            {% for product in product_list %}
+                <tr>
+                    <th scope="row">{{ product.id }}</th>
+                    <th><a id="product-{{ product.id }}" onmouseenter="product_detail({{ product.id }});" onmouseleave="product_leave({{ product.id }});" href="/product/{{ product.id }}">{{ product.name }}</a></th>
+                    <th>$ {{ product.price|intcomma }}</th>
+                    <th>{{ product.register_date|date:'m/d/Y' }}</th>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
